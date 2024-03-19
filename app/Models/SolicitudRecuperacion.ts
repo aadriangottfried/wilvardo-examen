@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class SolicitudRecuperacion extends BaseModel {
+  public static table='solicitudes_recuperacion'
+
   @column({ isPrimary: true })
   public id: number
 
@@ -18,5 +20,5 @@ export default class SolicitudRecuperacion extends BaseModel {
   public created_At: DateTime
 
   @column.dateTime({})
-  public expariesAt: DateTime
+  public expires_at: DateTime
 }

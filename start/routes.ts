@@ -23,6 +23,7 @@ import'./routes/AdminRoutes'
 import './routes/ClienteRoutes'
 import './routes/DestinoRoutes'
 import './routes/loginRoutes'
+import './routes/RecoverContra'
 
 Route.get('/', async () => {
   return { hello: 'world' }
