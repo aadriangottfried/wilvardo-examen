@@ -28,4 +28,9 @@ SMTP_HOST: Env.schema.string({ format: 'host' }),
 SMTP_PORT: Env.schema.number(),
 SMTP_USERNAME: Env.schema.string(),
 SMTP_PASSWORD: Env.schema.string(),
+
+//
+TWILIO_ACCOUNT_SID: Env.schema.string(),
+TWILIO_AUTH_TOKEN: Env.schema.string(),
+TWILIO_FROM_NUMBER: Env.schema.string(),
 })

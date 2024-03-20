@@ -7,6 +7,5 @@ Route.group(() => {
     Route.put('/:destino_id', 'DestinosController.update');
     Route.delete('/:destino_id', 'DestinosController.destroy');
 
-    //Route.post('/login', 'ClientesController.authLogin');
-   // Route.post('/sendme-sms', 'ClientesController.sendMeSMS');
+    
 }).prefix('/api/destino')

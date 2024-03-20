@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt';
  * @swagger
  * /api/auth:
  *   post:
+ *     tags:
+ *       - inicio de sesion Administrador
  *     summary: Iniciar sesión de administrador
  *     description: Iniciar sesión de administrador con email y contraseña
  *     requestBody:

@@ -8,6 +8,10 @@ export default class ClientesController {
  * @swagger
  * /api/cliente:
  *   get:
+ *     tags:
+ *       - Cliente
+ *     security:
+ *       - bearerAuth: []
  *     summary: Obtiene una lista de clientes.
  *     responses:
  *       200:
@@ -77,6 +81,10 @@ export default class ClientesController {
  * @swagger
  * /api/cliente:
  *   post:
+ *     tags:
+ *       - Cliente
+ *     security:
+ *       - bearerAuth: []
  *     summary: Crea un nuevo cliente.
  *     requestBody:
  *       required: true
@@ -201,6 +209,10 @@ export default class ClientesController {
  * @swagger
  * /api/cliente/{cliente_id}:
  *   get:
+ *     tags:
+ *       - Cliente
+ *     security:
+ *       - bearerAuth: []
  *     summary: Obtiene un cliente por su ID.
  *     parameters:
  *       - in: path
@@ -276,6 +288,10 @@ export default class ClientesController {
  * @swagger
  * /api/cliente/{cliente_id}:
  *   put:
+ *     tags:
+ *       - Cliente
+ *     security:
+ *       - bearerAuth: []
  *     summary: Actualiza un cliente por su ID.
  *     parameters:
  *       - in: path
@@ -359,6 +375,10 @@ export default class ClientesController {
  * @swagger
  * /api/cliente/{cliente_id}:
  *   delete:
+ *     tags:
+ *       - Cliente
+ *     security:
+ *       - bearerAuth: []
  *     summary: Elimina un cliente por su ID.
  *     parameters:
  *       - in: path

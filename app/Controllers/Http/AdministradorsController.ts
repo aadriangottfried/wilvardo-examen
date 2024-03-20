@@ -10,6 +10,10 @@ export default class AdministradorsController {
  * @swagger
  * /api/admin:
  *   get:
+ *     tags:
+ *       - Administrador
+ *     security:
+ *       - bearerAuth: []
  *     summary: Obtiene una lista de administradores.
  *     responses:
  *       200:
@@ -80,6 +84,10 @@ export default class AdministradorsController {
  * @swagger
  * /api/admin:
  *   post:
+ *     tags:
+ *       - Administrador
+ *     security:
+ *       - bearerAuth: []
  *     summary: Crea un nuevo administrador.
  *     requestBody:
  *       required: true
@@ -212,6 +220,10 @@ export default class AdministradorsController {
  * @swagger
  * /api/admin/{admin_id}:
  *   get:
+ *     tags:
+ *       - Administrador
+ *     security:
+ *       - bearerAuth: []
  *     summary: Obtiene un administrador por su ID.
  *     parameters:
  *       - in: path
@@ -287,6 +299,10 @@ export default class AdministradorsController {
  * @swagger
  * /api/admin/{admin_id}:
  *   put:
+ *     tags:
+ *       - Administrador
+ *     security:
+ *       - bearerAuth: []
  *     summary: Actualiza un administrador por su ID.
  *     parameters:
  *       - in: path
@@ -374,6 +390,10 @@ export default class AdministradorsController {
  * @swagger
  * /api/admin/{admin_id}:
  *   delete:
+ *     tags:
+ *       - Administrador
+ *     security:
+ *       - bearerAuth: []
  *     summary: Elimina un administrador por su ID.
  *     parameters:
  *       - in: path

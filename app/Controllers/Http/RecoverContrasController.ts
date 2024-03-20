@@ -16,6 +16,8 @@ export default class RecoverContrasController {
  * @swagger
  * /api/recoverContra/codigo:
  *   post:
+ *     tags:
+ *       - Recuperar Contraseña
  *     summary: Recupera la contraseña del administrador y envía un correo electrónico con un código de verificación.
  *     requestBody:
  *       required: true
@@ -123,11 +125,21 @@ export default class RecoverContrasController {
     }
 
     public async createCode() {
-        let code: string = ''
-        while (code.length < 6) {
-            code += Math.random().toString(36).substring(2, 8)
+        let code: string = '';
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const numbers = '0123456789';
+    
+        for (let i = 0; i < 3; i++) {
+            code += letters.charAt(Math.floor(Math.random() * letters.length));
         }
-        return code.substring(0, 6)
+    
+        code += '-';
+    
+        for (let i = 0; i < 3; i++) {
+            code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+        }
+    
+        return code;
     }
 
 
@@ -135,6 +147,8 @@ export default class RecoverContrasController {
  * @swagger
  * /api/recoverContra/actuaContra:
  *   post:
+ *     tags:
+ *       - Recuperar Contraseña
  *     summary: Reset password
  *     description: Reset password using a verification code.
  *     requestBody:

@@ -1,21 +1,20 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database';
-import Destino from 'App/Models/Destino';
+import Origen from 'App/Models/Origen';
 import CopoMexResources from 'App/Resource/CopoMexReources';
 
+export default class OrigensController {
 
-export default class DestinosController {
-
-  /**
+/**
  * @swagger
- * /api/destino:
+ * /api/origen:
  *   get:
  *     tags:
- *       - Destino
- *     summary: Obtiene una lista de destinos.
+ *       - Origen
+ *     summary: Obtener todos los origenes
  *     responses:
  *       200:
- *         description: Lista de destinos obtenida exitosamente.
+ *         description: Origines encontrados exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -29,20 +28,13 @@ export default class DestinosController {
  *                   example: Recurso encontrado
  *                 message:
  *                   type: string
- *                   example: La lista de recursos fue encontrada exitosamente
+ *                   example: Los origenes fueron encontrados exitosamente
  *                 data:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       destino_id:
- *                         type: integer
- *                         example: 1
- *                       nombre:
- *                         type: string
- *                         example: Destino 1
+ *                     $ref: '#/components/schemas/Origen'
  *       500:
- *         description: Error al obtener la lista de destinos.
+ *         description: Error al obtener los origenes
  *         content:
  *           application/json:
  *             schema:
@@ -53,42 +45,43 @@ export default class DestinosController {
  *                   example: error
  *                 title:
  *                   type: string
- *                   example: Error al crear el destino
+ *                   example: Error al obtener los origenes
  *                 message:
  *                   type: string
  *                   example: El recurso no fue creado exitosamente
  *                 error:
  *                   type: string
- *                   example: Error interno del servidor
+ *                   example: Mensaje de error detallado
  */
   public async index({response}: HttpContextContract) {
     try {
-      const destinos = await Destino.query()
-        .orderBy("destino_id", "asc")
+      const origen = await Origen.query()
+        .orderBy("id", "asc")
 
       return response.status(200).json({
         type: "Exitoso",
         title: "Recurso encontrado",
-        message: "La lista de recursos fue encontrada exitosamente",
-        data: destinos,
+        message: "Los origenes fueron encontrados exitosamente",
+        data: origen,
       });
     } catch (error) {
       return response.status(500).json({
         success: "error",
-        title: "Error al crear el destino",
+        title: "Error al crear el origen",
         message: "El recurso no fue creado exitosamente",
         error: error.message,
       });
     }
   }
 
-  /**
+
+/**
  * @swagger
- * /api/destino:
+ * /api/origen:
  *   post:
  *     tags:
- *       - Destino
- *     summary: Crea un nuevo destino a partir de un código postal.
+ *       - Origen
+ *     summary: Guardar un nuevo origen
  *     requestBody:
  *       required: true
  *       content:
@@ -98,10 +91,9 @@ export default class DestinosController {
  *             properties:
  *               codigo_postal:
  *                 type: string
- *                 example: "12345"
  *     responses:
  *       201:
- *         description: Destino creado exitosamente.
+ *         description: Origen guardado exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -112,14 +104,14 @@ export default class DestinosController {
  *                   example: Exitoso
  *                 title:
  *                   type: string
- *                   example: Destino guardado exitosamente
+ *                   example: Origen guardado exitosamente
  *                 message:
  *                   type: string
- *                   example: El destino ha sido guardado exitosamente
+ *                   example: El origen ha sido guardado exitosamente
  *                 data:
- *                   $ref: '#/components/schemas/Destino'
+ *                   $ref: '#/components/schemas/Origen'
  *       500:
- *         description: Error al guardar el destino.
+ *         description: Error al guardar el origen
  *         content:
  *           application/json:
  *             schema:
@@ -130,14 +122,12 @@ export default class DestinosController {
  *                   example: error
  *                 title:
  *                   type: string
- *                   example: Error al guardar el destino
+ *                   example: Error al guardar el origen
  *                 message:
  *                   type: string
- *                   example: Mensaje de error específico
+ *                   example: Mensaje de error detallado
  */
-
   public async store({request, response}: HttpContextContract) {
-
     const transaction = await Database.transaction();
 
     try {
@@ -147,51 +137,50 @@ export default class DestinosController {
       console.log(codigo_postal);
       console.log(inf_copomex)
 
-      const destino = new Destino();
-      destino.codigo_postal = inf_copomex.data.response.cp;
-      destino.pais = inf_copomex.data.response.pais;
-      destino.ciudad = inf_copomex.data.response.ciudad;
-      destino.estado = inf_copomex.data.response.estado;
+      const origen = new Origen();
+      origen.codigo_postal = inf_copomex.data.response.cp;
+      origen.pais = inf_copomex.data.response.pais;
+      origen.ciudad = inf_copomex.data.response.ciudad;
+      origen.estado = inf_copomex.data.response.estado;
 
-      await destino.save();
+      await origen.save();
       await transaction.commit();
 
       return response.status(201).json({
         type: 'Exitoso',
-        title: 'Destino guardado exitosamente',
-        message: 'El destino ah sido guardado exitosamente',
-        data: destino
+        title: 'Origen guardado exitosamente',
+        message: 'El origen ah sido guardado exitosamente',
+        data: origen
       });
-
 
     } catch (error) {
       await transaction.rollback();
       return response.status(500).json({
         type: 'error',
-        title: 'Error al guardar el destino',
+        title: 'Error al guardar el origen',
         message: error.message
       });
     }
-
   }
 
- /**
+
+  /**
  * @swagger
- * /api/destino/{destino_id}:
+ * /api/origen/{id}:
  *   get:
  *     tags:
- *       - Destino
- *     summary: Obtiene un destino por su ID.
+ *       - Origen
+ *     summary: Obtener un origen por su ID
  *     parameters:
  *       - in: path
- *         name: destino_id
+ *         name: id
  *         required: true
- *         description: ID del destino a obtener.
  *         schema:
  *           type: integer
+ *         description: ID del origen a obtener
  *     responses:
  *       200:
- *         description: Destino encontrado.
+ *         description: Origen encontrado exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -205,11 +194,11 @@ export default class DestinosController {
  *                   example: Recurso enseñado
  *                 message:
  *                   type: string
- *                   example: El recurso fue encontrado exitosamente
+ *                   example: El origen fue encontrado exitosamente
  *                 data:
- *                   $ref: '#/components/schemas/Destino'
+ *                   $ref: '#/components/schemas/Origen'
  *       404:
- *         description: Destino no encontrado.
+ *         description: El origen con el ID especificado no fue encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -223,49 +212,50 @@ export default class DestinosController {
  *                   example: Error del cliente
  *                 message:
  *                   type: string
- *                   example: El id no fue encontrado {destino_id}
+ *                   example: El ID no fue encontrado
  *                 data:
- *                   type: null
- */ 
+ *                   type: integer
+ *                   example: 123
+ */
   public async show({response,params}: HttpContextContract) {
-    const destino_id = params.destino_id;
+    const id = params.id;
 
-    const destinos: any = await Destino.query()
-      .where("destino_id", destino_id)
+    const origen: any = await Origen.query()
+      .where("id", id)
       .first();
 
-    if (destinos) {
+    if (origen) {
       return response.json({
         type: "show",
         title: "Recurso enseñado",
-        messsage: " El recurso fue escontrado exitosamente",
-        data: destinos,
+        messsage: " El origen fue escontrado exitosamente",
+        data: origen,
       });
     } else {
       return response.status(404).json({
         type: "error",
         title: "Error del cliente",
-        message: "El id no fue encuentro " + destino_id,
-        data: destinos,
+        message: "El id no fue encuentro " + id,
+        data: id,
       });
     }
-  }
 
+  }
 
   /**
  * @swagger
- * /api/destino/{destino_id}:
+ * /api/origen/{id}:
  *   put:
  *     tags:
- *       - Destino
- *     summary: Actualiza un destino existente por su ID.
+ *       - Origen
+ *     summary: Actualizar un origen por su ID
  *     parameters:
  *       - in: path
- *         name: destino_id
+ *         name: id
  *         required: true
- *         description: ID del destino a actualizar.
  *         schema:
  *           type: integer
+ *         description: ID del origen a actualizar
  *     requestBody:
  *       required: true
  *       content:
@@ -275,10 +265,9 @@ export default class DestinosController {
  *             properties:
  *               codigo_postal:
  *                 type: string
- *                 example: "12345"
  *     responses:
  *       200:
- *         description: Destino actualizado exitosamente.
+ *         description: Origen actualizado exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -289,14 +278,14 @@ export default class DestinosController {
  *                   example: success
  *                 title:
  *                   type: string
- *                   example: Destino actualizado
+ *                   example: Origen actualizado
  *                 message:
  *                   type: string
- *                   example: El Destino fue actualizado exitosamente
+ *                   example: El origen fue actualizado exitosamente
  *                 data:
- *                   $ref: '#/components/schemas/Destino'
+ *                   $ref: '#/components/schemas/Origen'
  *       404:
- *         description: Destino no encontrado.
+ *         description: El origen con el ID especificado no fue encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -307,14 +296,12 @@ export default class DestinosController {
  *                   example: error
  *                 title:
  *                   type: string
- *                   example: Destino no encontrado
+ *                   example: Origen no encontrado
  *                 message:
  *                   type: string
- *                   example: El destino no ha sido encontrado
- *                 data:
- *                   type: null
+ *                   example: El origen no ha sido encontrado
  *       500:
- *         description: Error al actualizar el destino.
+ *         description: Error al actualizar el origen
  *         content:
  *           application/json:
  *             schema:
@@ -325,76 +312,77 @@ export default class DestinosController {
  *                   example: error
  *                 title:
  *                   type: string
- *                   example: Error al actualizar el destino
+ *                   example: Error al actualizar el origen
  *                 message:
  *                   type: string
- *                   example: Mensaje de error específico
+ *                   example: Mensaje de error detallado
  */
   public async update({response, params, request}: HttpContextContract) {
     try {
-      const destino_id = params.destino_id;
+      const id = params.id;
       const codigo_postal = request.input('codigo_postal');
       const inf_copomex = await CopoMexResources.obtenerDestinos(codigo_postal);
 
       if (inf_copomex.type === 'error') {
         return response.status(500).json({
           type: 'error',
-          title: 'Error al querer buscar el destino',
+          title: 'Error al querer buscar el origen',
           message: inf_copomex.message
         });
       } else {
 
-        const destino = await Destino.query().where('destino_id', destino_id).first();
+        const origen = await Origen.query().where('id',id).first();
 
-        if (!destino) {
+        if (!origen) {
           return response.status(404).json({
             type: 'error',
-            title: 'Destino no encontrado',
-            message: 'El destino no ha sido encontrado'
+            title: 'Origen no encontrado',
+            message: 'El origen no ha sido encontrado'
           });
         } else {
 
-          destino.codigo_postal = inf_copomex.data.response.codigo_postal;
-          destino.pais = inf_copomex.data.response.pais;
-          destino.ciudad = inf_copomex.data.response.ciudad;
-          destino.estado = inf_copomex.data.response.estado;
+          origen.codigo_postal = inf_copomex.data.response.cp;
+          origen.pais = inf_copomex.data.response.pais;
+          origen.ciudad = inf_copomex.data.response.ciudad;
+          origen.estado = inf_copomex.data.response.estado;
         
-          await destino.save();
+          await origen.save();
 
           return response.status(200).json({
             type: 'success',
-            title: 'Destino actualizado',
-            message: 'El Destino fue actualizado exitosamente',
-            data: destino
+            title: 'Origen actualizado',
+            message: 'El Origen fue actualizado exitosamente',
+            data: origen
           });
         }
       }
     } catch (error) {
       return response.status(500).json({
         type: 'error',
-        title: 'Error al actualizar el destino',
+        title: 'Error al actualizar el origen',
         message: error.message
       });
     }
   }
 
+
 /**
  * @swagger
- * /api/destino/{destino_id}:
+ * /api/origen/{id}:
  *   delete:
  *     tags:
- *       - Destino
- *     summary: Elimina un destino por su ID.
+ *       - Origen
+ *     summary: Eliminar un origen por su ID
  *     parameters:
  *       - in: path
- *         name: destino_id
+ *         name: id
  *         required: true
- *         description: ID del destino a eliminar.
  *         schema:
  *           type: integer
+ *         description: ID del origen a eliminar
  *     responses:
  *       200:
- *         description: Destino eliminado exitosamente.
+ *         description: Origen eliminado exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -405,14 +393,14 @@ export default class DestinosController {
  *                   example: success
  *                 title:
  *                   type: string
- *                   example: Destino eliminado
+ *                   example: Origen eliminado
  *                 message:
  *                   type: string
- *                   example: El Destino ha sido eliminado exitosamente
+ *                   example: El origen ha sido eliminado exitosamente
  *                 data:
- *                   $ref: '#/components/schemas/Destino'
+ *                   $ref: '#/components/schemas/Origen'
  *       404:
- *         description: Destino no encontrado.
+ *         description: El origen con el ID especificado no fue encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -423,14 +411,12 @@ export default class DestinosController {
  *                   example: error
  *                 title:
  *                   type: string
- *                   example: El Destino no fue encontrado
+ *                   example: Origen no encontrado
  *                 message:
  *                   type: string
- *                   example: Destino no encontrado
- *                 data:
- *                   type: null
+ *                   example: Origen no encontrado
  *       500:
- *         description: Error al eliminar el destino.
+ *         description: Error al eliminar el origen
  *         content:
  *           application/json:
  *             schema:
@@ -444,36 +430,37 @@ export default class DestinosController {
  *                   example: Error al querer eliminar el destino
  *                 message:
  *                   type: string
- *                   example: Mensaje de error específico
+ *                   example: Mensaje de error detallado
  */
   public async destroy({params, response}: HttpContextContract) {
-      try {
-        const destino_id = params.destino_id;
-        const destino = await Destino.find(destino_id);
-    
-        if (!destino) {
-          return response.status(404).json({
-            type: 'error',
-            title: 'El Destino no fue encontrado',
-            message: 'Destino no encontrado'
-          });
-        }
-    
-        await destino.delete();
-    
-        return response.status(200).json({
-          type: 'success',
-          title: 'Destino eliminado',
-          message: 'El Destino ha sido eliminado exitosamente',
-          data: destino
-        });
-      } catch (error) {
-        return response.status(500).json({
+    try {
+      const id = params.id;
+      const origen = await Origen.find(id);
+  
+      if (!origen) {
+        return response.status(404).json({
           type: 'error',
-          title: 'Error al querer eliminar el destino',
-          message: error.message
+          title: 'El Origen no fue encontrado',
+          message: 'Origen no encontrado'
         });
       }
+  
+      await origen.delete();
+  
+      return response.status(200).json({
+        type: 'success',
+        title: 'Origen eliminado',
+        message: 'El origen ha sido eliminado exitosamente',
+        data: origen
+      });
+    } catch (error) {
+      return response.status(500).json({
+        type: 'error',
+        title: 'Error al querer eliminar el destino',
+        message: error.message
+      });
     }
   }
+
+}
 

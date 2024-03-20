@@ -15,6 +15,15 @@ export default {
 				title: 'Application with swagger docs',
 				version: '1.0.0',
 				description: 'My application with swagger docs'
+			},
+			components: {
+				securitySchemes: {
+					bearerAuth: {
+						type: 'http',
+						scheme: 'bearer',
+						bearerFormat: 'JWT'
+					}
+				}
 			}
 		},
 
