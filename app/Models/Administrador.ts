@@ -43,7 +43,7 @@ import { SoftDeletes } from '@ioc:Adonis/Addons/LucidSoftDeletes'
  *           description: Fecha y hora de marcado como eliminado del administrador (borrado suave).
  */
 export default class Administrador extends compose( BaseModel, SoftDeletes) {
-  public static table='Administradores'
+  public static table='administradores'
 
   @column({ isPrimary: true })
   public admin_id: number

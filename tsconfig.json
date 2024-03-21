@@ -34,7 +34,8 @@
       "adonis-lucid-soft-deletes",
       "adonis5-swagger",
       "@adonisjs/auth",
-      "@adonisjs/mail"
+      "@adonisjs/mail",
+      "@adonisjs/view"
     ]
   }
 }

@@ -8,22 +8,22 @@ export default class Cotizacion extends compose (BaseModel, SoftDeletes) {
   public static table = 'cotizaciones'
 
   @column({ isPrimary: true })
-  public id: number
+  public cotizacion_id: number
 
   @column()
-  public cliente_id: string
+  public cliente_id: number
 
   @column()
-  public origen_id: string
-
-  @column()
-  public destino_id: string
+  public destino_id: number
 
   @column()
   public categoria: string
 
   @column()
-  public precio: string
+  public porcentaje_categoria: number
+
+  @column()
+  public precio: number
 
   @column()
   public folio: string

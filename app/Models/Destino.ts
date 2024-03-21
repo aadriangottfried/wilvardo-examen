@@ -41,7 +41,7 @@ import { SoftDeletes } from '@ioc:Adonis/Addons/LucidSoftDeletes'
  *           description: Fecha y hora de marcado como eliminado del destino (borrado suave).
  */
 export default class Destino extends compose (BaseModel,SoftDeletes ){
-  public static table = 'Destinos'
+  public static table = 'destinos'
 
   @column({ isPrimary: true })
   public destino_id: number
@@ -57,6 +57,12 @@ export default class Destino extends compose (BaseModel,SoftDeletes ){
 
   @column()
   public estado: string
+
+  @column()
+  public km: number
+
+  @column()
+  public precio_km: number
 
   @column.dateTime({ autoCreate: true })
   public created_at: DateTime

@@ -61,7 +61,7 @@ export default class DestinosController {
  *                   type: string
  *                   example: Error interno del servidor
  */
-  public async index({response}: HttpContextContract) {
+  public async index({ response }: HttpContextContract) {
     try {
       const destinos = await Destino.query()
         .orderBy("destino_id", "asc")
@@ -82,7 +82,7 @@ export default class DestinosController {
     }
   }
 
-  /**
+/**
  * @swagger
  * /api/destino:
  *   post:
@@ -99,6 +99,12 @@ export default class DestinosController {
  *               codigo_postal:
  *                 type: string
  *                 example: "12345"
+ *               km:
+ *                 type: number
+ *                 example: 100
+ *               precio_km:
+ *                 type: number
+ *                 example: 5.5
  *     responses:
  *       201:
  *         description: Destino creado exitosamente.
@@ -118,6 +124,22 @@ export default class DestinosController {
  *                   example: El destino ha sido guardado exitosamente
  *                 data:
  *                   $ref: '#/components/schemas/Destino'
+ *       400:
+ *         description: Error en el código postal.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: error
+ *                 title:
+ *                   type: string
+ *                   example: Error en el código postal
+ *                 message:
+ *                   type: string
+ *                   example: El código postal debe tener 5 dígitos
  *       500:
  *         description: Error al guardar el destino.
  *         content:
@@ -135,14 +157,25 @@ export default class DestinosController {
  *                   type: string
  *                   example: Mensaje de error específico
  */
-
-  public async store({request, response}: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
 
     const transaction = await Database.transaction();
 
     try {
       const codigo_postal = request.input('codigo_postal');
-      const inf_copomex= await CopoMexResources.obtenerDestinos(codigo_postal);
+      const km = request.input('km');
+      const precio_km = request.input('precio_km');
+
+      // validar longitud del codigo postal
+      if (codigo_postal.length !== 5) {
+        return response.status(400).json({
+          type: 'error',
+          title: 'Error en el código postal',
+          message: 'El código postal debe tener 5 dígitos'
+        });
+      }
+
+      const inf_copomex = await CopoMexResources.obtenerDestinos(codigo_postal);
 
       console.log(codigo_postal);
       console.log(inf_copomex)
@@ -152,6 +185,8 @@ export default class DestinosController {
       destino.pais = inf_copomex.data.response.pais;
       destino.ciudad = inf_copomex.data.response.ciudad;
       destino.estado = inf_copomex.data.response.estado;
+      destino.km = km;
+      destino.precio_km = precio_km;
 
       await destino.save();
       await transaction.commit();
@@ -175,59 +210,59 @@ export default class DestinosController {
 
   }
 
- /**
- * @swagger
- * /api/destino/{destino_id}:
- *   get:
- *     tags:
- *       - Destino
- *     summary: Obtiene un destino por su ID.
- *     parameters:
- *       - in: path
- *         name: destino_id
- *         required: true
- *         description: ID del destino a obtener.
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Destino encontrado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 type:
- *                   type: string
- *                   example: show
- *                 title:
- *                   type: string
- *                   example: Recurso enseñado
- *                 message:
- *                   type: string
- *                   example: El recurso fue encontrado exitosamente
- *                 data:
- *                   $ref: '#/components/schemas/Destino'
- *       404:
- *         description: Destino no encontrado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 type:
- *                   type: string
- *                   example: error
- *                 title:
- *                   type: string
- *                   example: Error del cliente
- *                 message:
- *                   type: string
- *                   example: El id no fue encontrado {destino_id}
- *                 data:
- *                   type: null
- */ 
-  public async show({response,params}: HttpContextContract) {
+  /**
+  * @swagger
+  * /api/destino/{destino_id}:
+  *   get:
+  *     tags:
+  *       - Destino
+  *     summary: Obtiene un destino por su ID.
+  *     parameters:
+  *       - in: path
+  *         name: destino_id
+  *         required: true
+  *         description: ID del destino a obtener.
+  *         schema:
+  *           type: integer
+  *     responses:
+  *       200:
+  *         description: Destino encontrado.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 type:
+  *                   type: string
+  *                   example: show
+  *                 title:
+  *                   type: string
+  *                   example: Recurso enseñado
+  *                 message:
+  *                   type: string
+  *                   example: El recurso fue encontrado exitosamente
+  *                 data:
+  *                   $ref: '#/components/schemas/Destino'
+  *       404:
+  *         description: Destino no encontrado.
+  *         content:
+  *           application/json:
+  *             schema:
+  *               type: object
+  *               properties:
+  *                 type:
+  *                   type: string
+  *                   example: error
+  *                 title:
+  *                   type: string
+  *                   example: Error del cliente
+  *                 message:
+  *                   type: string
+  *                   example: El id no fue encontrado {destino_id}
+  *                 data:
+  *                   type: null
+  */
+  public async show({ response, params }: HttpContextContract) {
     const destino_id = params.destino_id;
 
     const destinos: any = await Destino.query()
@@ -276,6 +311,12 @@ export default class DestinosController {
  *               codigo_postal:
  *                 type: string
  *                 example: "12345"
+ *               km:
+ *                 type: number
+ *                 example: 100
+ *               precio_km:
+ *                 type: number
+ *                 example: 5.5
  *     responses:
  *       200:
  *         description: Destino actualizado exitosamente.
@@ -330,10 +371,12 @@ export default class DestinosController {
  *                   type: string
  *                   example: Mensaje de error específico
  */
-  public async update({response, params, request}: HttpContextContract) {
+  public async update({ response, params, request }: HttpContextContract) {
     try {
       const destino_id = params.destino_id;
       const codigo_postal = request.input('codigo_postal');
+      const km = request.input('km');
+      const precio_km = request.input('precio_km');
       const inf_copomex = await CopoMexResources.obtenerDestinos(codigo_postal);
 
       if (inf_copomex.type === 'error') {
@@ -358,7 +401,9 @@ export default class DestinosController {
           destino.pais = inf_copomex.data.response.pais;
           destino.ciudad = inf_copomex.data.response.ciudad;
           destino.estado = inf_copomex.data.response.estado;
-        
+          destino.km = km;
+          destino.precio_km = precio_km;
+
           await destino.save();
 
           return response.status(200).json({
@@ -378,102 +423,102 @@ export default class DestinosController {
     }
   }
 
-/**
- * @swagger
- * /api/destino/{destino_id}:
- *   delete:
- *     tags:
- *       - Destino
- *     summary: Elimina un destino por su ID.
- *     parameters:
- *       - in: path
- *         name: destino_id
- *         required: true
- *         description: ID del destino a eliminar.
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Destino eliminado exitosamente.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 type:
- *                   type: string
- *                   example: success
- *                 title:
- *                   type: string
- *                   example: Destino eliminado
- *                 message:
- *                   type: string
- *                   example: El Destino ha sido eliminado exitosamente
- *                 data:
- *                   $ref: '#/components/schemas/Destino'
- *       404:
- *         description: Destino no encontrado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 type:
- *                   type: string
- *                   example: error
- *                 title:
- *                   type: string
- *                   example: El Destino no fue encontrado
- *                 message:
- *                   type: string
- *                   example: Destino no encontrado
- *                 data:
- *                   type: null
- *       500:
- *         description: Error al eliminar el destino.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 type:
- *                   type: string
- *                   example: error
- *                 title:
- *                   type: string
- *                   example: Error al querer eliminar el destino
- *                 message:
- *                   type: string
- *                   example: Mensaje de error específico
- */
-  public async destroy({params, response}: HttpContextContract) {
-      try {
-        const destino_id = params.destino_id;
-        const destino = await Destino.find(destino_id);
-    
-        if (!destino) {
-          return response.status(404).json({
-            type: 'error',
-            title: 'El Destino no fue encontrado',
-            message: 'Destino no encontrado'
-          });
-        }
-    
-        await destino.delete();
-    
-        return response.status(200).json({
-          type: 'success',
-          title: 'Destino eliminado',
-          message: 'El Destino ha sido eliminado exitosamente',
-          data: destino
-        });
-      } catch (error) {
-        return response.status(500).json({
+  /**
+   * @swagger
+   * /api/destino/{destino_id}:
+   *   delete:
+   *     tags:
+   *       - Destino
+   *     summary: Elimina un destino por su ID.
+   *     parameters:
+   *       - in: path
+   *         name: destino_id
+   *         required: true
+   *         description: ID del destino a eliminar.
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Destino eliminado exitosamente.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 type:
+   *                   type: string
+   *                   example: success
+   *                 title:
+   *                   type: string
+   *                   example: Destino eliminado
+   *                 message:
+   *                   type: string
+   *                   example: El Destino ha sido eliminado exitosamente
+   *                 data:
+   *                   $ref: '#/components/schemas/Destino'
+   *       404:
+   *         description: Destino no encontrado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 type:
+   *                   type: string
+   *                   example: error
+   *                 title:
+   *                   type: string
+   *                   example: El Destino no fue encontrado
+   *                 message:
+   *                   type: string
+   *                   example: Destino no encontrado
+   *                 data:
+   *                   type: null
+   *       500:
+   *         description: Error al eliminar el destino.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 type:
+   *                   type: string
+   *                   example: error
+   *                 title:
+   *                   type: string
+   *                   example: Error al querer eliminar el destino
+   *                 message:
+   *                   type: string
+   *                   example: Mensaje de error específico
+   */
+  public async destroy({ params, response }: HttpContextContract) {
+    try {
+      const destino_id = params.destino_id;
+      const destino = await Destino.find(destino_id);
+
+      if (!destino) {
+        return response.status(404).json({
           type: 'error',
-          title: 'Error al querer eliminar el destino',
-          message: error.message
+          title: 'El Destino no fue encontrado',
+          message: 'Destino no encontrado'
         });
       }
+
+      await destino.delete();
+
+      return response.status(200).json({
+        type: 'success',
+        title: 'Destino eliminado',
+        message: 'El Destino ha sido eliminado exitosamente',
+        data: destino
+      });
+    } catch (error) {
+      return response.status(500).json({
+        type: 'error',
+        title: 'Error al querer eliminar el destino',
+        message: error.message
+      });
     }
   }
+}
 

@@ -372,7 +372,7 @@ export default class AdministradorsController {
       updateAdmin.nombre= cuerpo["nombre"];
       updateAdmin.apellido = cuerpo["apellido"];
       updateAdmin.email = cuerpo["email"];
-      updateAdmin.contrasena = cuerpo["contraseña"];
+      updateAdmin.contrasena = await bcrypt.hash(cuerpo["contrasena"], 10);
 
       await updateAdmin.save();
       response.status(200).json({

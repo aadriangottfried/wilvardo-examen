@@ -25,7 +25,6 @@ import './routes/DestinoRoutes'
 import './routes/loginRoutes'
 import './routes/RecoverContra'
 import './routes/CotizacionRoutes'
-import './routes/OrigenRoutes'
 
 Route.get('/', async () => {
   return { hello: 'world' }
