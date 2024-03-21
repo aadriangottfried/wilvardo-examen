@@ -852,7 +852,7 @@ export default class CotizacionesController {
       await Mail.send((message) => {
         message
           .from(Env.get('SMTP_USERNAME'))
-          .to('adriangottfried.69@gmail.com')
+          .to('wilvardo@gmail.com')
           .subject('Cotización aceptada')
           .htmlView("emails/cotizacion", {
             folio: cotizacion.folio,
@@ -987,7 +987,7 @@ export default class CotizacionesController {
         message
           .from(Env.get('SMTP_USERNAME'))
           .subject('Cotización rechazada')
-          .to('adriangottfried.69@gmail.com')
+          .to('wilvardo@gmail.com')
           .htmlView("emails/cotizacion", {
             folio: cotizacion.folio,
             precio: cotizacion.precio,
